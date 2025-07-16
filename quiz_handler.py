@@ -10,6 +10,7 @@ def Load_Data():
     global DATA
     with open('data.json', 'r', encoding='utf-8') as file:
         DATA = json.load(file)
+    return len(DATA)
 
 async def New_Quiz(message):
     await DBH.Create_User(message.from_user.id, message.from_user.username)

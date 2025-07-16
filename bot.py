@@ -12,6 +12,7 @@ import quiz_handler as QH
 API_TOKEN = ''
 BOT = Bot(token=API_TOKEN)
 DP = Dispatcher()
+QUSTIONS_COUNT = 0
 
 @DP.message(Command('start'))
 async def CMD_Start(message: types.message):
@@ -77,13 +78,15 @@ async def Show_Stats(message, user_id):
     all_stats, user_stats = await DBH.Get_Statistic(user_id)
     await message.answer(f'Ваша статистика: {user_stats[0]} правильных ответов и {user_stats[1]} неправильных ответов\n')
     msg = 'Общая статистика:\n'   
-    for index, row in enumerate(all_stats):    
-        msg += f'{index + 1}. {row[0]} ответил {row[1] * 10}% правильных ответов\n'
+    for index, row in enumerate(all_stats):
+        percentage = QUSTIONS_COUNT / 100 * row[1]
+        msg += f'{index + 1}. {row[0]} ответил {percentage} % правильных ответов\n'
     await message.answer(msg)
 
 async def main():
+    global QUSTIONS_COUNT
     logging.basicConfig(level=logging.INFO)
-    QH.Load_Data()
+    QUSTIONS_COUNT = QH.Load_Data()
     await DBH.Create_Table()
     await DP.start_polling(BOT)
 
